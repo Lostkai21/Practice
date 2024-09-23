@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Card Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f1f8e9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #game {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #2196F3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card.flipped {
+            background-color: #FF5722;
+        }
+    </style>
+</head>
+<body>
+    <div id="game"></div>
+    <script>
+        const game = document.getElementById('game');
+        const cardValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        const cards = [...cardValues, ...cardValues]; // Duplicate values
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        // Shuffle cards
+        cards.sort(() => 0.5 - Math.random());
+
+        cards.forEach(value => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.value = value;
+            card.addEventListener('click', flipCard);
+            game.appendChild(card);
+        });
+
+        function flipCard() {
+            if (flippedCards.length < 2 && !this.classList.contains('flipped')) {
+                this.classList.add('flipped');
+                this.textContent = this.dataset.value;
+                flippedCards.push(this);
+
+                if (flippedCards.length === 2) {
+                    setTimeout(checkMatch, 1000);
+                }
+            }
+        }
+
+        function checkMatch() {
+            const [firstCard, secondCard] = flippedCards;
+
+            if (firstCard.dataset.value === secondCard.dataset.value) {
+                matchedPairs++;
+                if (matchedPairs === cardValues.length) {
+                    setTimeout(() => alert('You won!'), 500);
+                }
+            } else {
+                firstCard.classList.remove('flipped');
+                firstCard.textContent = '';
+                secondCard.classList.remove('flipped');
+                secondCard.textContent = '';
+            }
+
+            flippedCards = [];
+        }
+    </script>
+</body>
+</html>
